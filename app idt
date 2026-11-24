@@ -1,0 +1,114 @@
+const alphabet = [
+  ['A','Apple','🍎','An apple is a fruit. It can be red, green, or yellow.'],['B','Ball','⚽','A ball is round. We can roll, throw, or kick a ball.'],['C','Cat','🐱','A cat is an animal. Cats can meow.'],['D','Dog','🐶','A dog is an animal. Dogs can bark.'],['E','Elephant','🐘','An elephant is a very large animal with a long trunk.'],['F','Fish','🐠','A fish lives in water and swims with its fins.'],['G','Grapes','🍇','Grapes are small, juicy fruits.'],['H','House','🏠','A house is a place where people can live.'],['I','Ice cream','🍦','Ice cream is a cold, sweet treat.'],['J','Juice','🧃','Juice is a drink made from fruit.'],['K','Kite','🪁','A kite can fly in the sky when the wind blows.'],['L','Lion','🦁','A lion is a big cat that lives in the wild.'],['M','Moon','🌙','The moon shines in the night sky.'],['N','Nest','🪺','A nest is a home that a bird can build.'],['O','Orange','🍊','An orange is a round fruit. Its name is also a colour.'],['P','Penguin','🐧','A penguin is a bird that swims and cannot fly.'],['Q','Queen','👑','A queen is a woman who rules a kingdom.'],['R','Rainbow','🌈','A rainbow has many colours and can appear after rain.'],['S','Sun','☀️','The sun gives us light and warmth.'],['T','Tree','🌳','A tree has a trunk, branches, and leaves.'],['U','Umbrella','☂️','An umbrella helps keep the rain off us.'],['V','Van','🚐','A van is a vehicle that can carry people or things.'],['W','Whale','🐋','A whale is a very large animal that lives in the ocean.'],['X','Xylophone','🎼','A xylophone makes music when we tap its bars.'],['Y','Yo-yo','🪀','A yo-yo is a toy that moves up and down on a string.'],['Z','Zebra','🦓','A zebra is an animal with black and white stripes.']
+].map(([letter,name,emoji,description])=>({name,emoji,description,kicker:`${letter} is for`,prompt:`Can you find something that starts with ${letter}?`}));
+
+const topics = [
+  {id:'alphabets',name:'Alphabets',icon:'🔤',color:'var(--lav)',items:alphabet},
+  {id:'numbers',name:'Numbers',icon:'🔢',color:'var(--mint)',items:[['1','☝️','One finger. Let’s count one.'],['2','✌️','Two eyes. Let’s count two.'],['3','🧸🧸🧸','Three teddy bears. Let’s count three.'],['4','🍓🍓🍓🍓','Four strawberries. Let’s count four.'],['5','⭐️⭐️⭐️⭐️⭐️','Five stars. Let’s count five.'],['6','🐞🐞🐞🐞🐞🐞','Six little ladybugs. Let’s count six.'],['7','🌈','Seven colours in a rainbow.'],['8','🐙','An octopus has eight arms.'],['9','🎈','Nine balloons are floating.'],['10','🔟','Ten fingers. Let’s count to ten.']].map(([name,emoji,description])=>({name,emoji,description,kicker:'Number',prompt:`Can you count to ${name}?`}))},
+  {id:'colours',name:'Colours',icon:'🎨',color:'var(--peach)',items:[['Red','🔴','This is red, like a strawberry.'],['Blue','🔵','This is blue, like the sky.'],['Yellow','🟡','This is yellow, like the sun.'],['Green','🟢','This is green, like a leaf.'],['Orange','🟠','This is orange, like an orange fruit.'],['Purple','🟣','This is purple, like a plum.'],['Pink','🩷','This is pink, like a flower.'],['Brown','🟤','This is brown, like a tree trunk.']].map(([name,emoji,description])=>({name,emoji,description,kicker:'Colour',prompt:`Can you find something ${name.toLowerCase()}?`}))},
+  {id:'shapes',name:'Shapes',icon:'🔺',color:'var(--yellow)',items:[['Circle','🔵','A circle is round. It has no corners.'],['Square','🟦','A square has four equal sides and four corners.'],['Triangle','🔺','A triangle has three sides and three corners.'],['Rectangle','🟧','A rectangle has four sides. Two sides are long and two are short.'],['Star','⭐','A star shape has points.'],['Heart','❤️','A heart is a shape we use to show love.'],['Oval','🥚','An oval is round and a little longer than a circle.'],['Diamond','🔶','A diamond shape has four sides and looks like a tilted square.']].map(([name,emoji,description])=>({name,emoji,description,kicker:'Shape',prompt:`Can you find a ${name.toLowerCase()} shape?`}))},
+  {id:'animals',name:'Animals',icon:'🐘',color:'var(--mint)',items:[['Cat','🐱','A cat is a pet. It can meow.'],['Dog','🐶','A dog is a pet. It can bark.'],['Elephant','🐘','An elephant has a long trunk.'],['Lion','🦁','A lion is a big cat. It can roar.'],['Bird','🐦','A bird has wings and can fly.'],['Fish','🐠','A fish swims in water.'],['Rabbit','🐰','A rabbit has long ears and can hop.'],['Turtle','🐢','A turtle has a shell and walks slowly.']].map(([name,emoji,description])=>({name,emoji,description,kicker:'Animal',prompt:`Can you find the ${name.toLowerCase()}?`}))},
+  {id:'objects',name:'Everyday objects',icon:'🧸',color:'var(--peach)',items:[['Cup','☕','A cup can hold a drink.'],['Chair','🪑','A chair is for sitting.'],['Book','📘','A book has pages. We can read a book.'],['Shoe','👟','A shoe goes on a foot.'],['Toothbrush','🪥','A toothbrush helps clean our teeth.'],['Phone','📱','A phone helps people talk to each other.'],['Key','🔑','A key can open a lock.'],['Clock','🕒','A clock helps us know the time.']].map(([name,emoji,description])=>({name,emoji,description,kicker:'Everyday object',prompt:`Can you find a ${name.toLowerCase()}?`}))}
+];
+
+const $ = (id) => document.getElementById(id);
+let activeTopic = topics[0];
+let activeIndex = 0;
+let explored = new Set(JSON.parse(localStorage.getItem('brightStepsExplored') || '[]'));
+let videoTimer = null;
+let sceneIndex = 0;
+const topicGrid = $('topic-grid');
+
+function speak(text) {
+  if (!('speechSynthesis' in window)) { $('encouragement').textContent = 'Voice is not available in this browser. You can read the words on the screen.'; return; }
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.rate = 0.85;
+  utterance.pitch = 1.05;
+  const voices = window.speechSynthesis.getVoices();
+  const preferred = voices.find(v => v.lang.toLowerCase().startsWith('en') && /female|samantha|aria|jenny/i.test(v.name));
+  if (preferred) utterance.voice = preferred;
+  window.speechSynthesis.speak(utterance);
+}
+
+function updateProgress() {
+  $('progress-text').textContent = `${explored.size} ${explored.size === 1 ? 'thing' : 'things'} explored`;
+  localStorage.setItem('brightStepsExplored', JSON.stringify([...explored]));
+}
+
+function markExplored(item) { explored.add(`${activeTopic.id}:${item.name}`); updateProgress(); }
+
+function renderTopics() {
+  topicGrid.innerHTML = '';
+  topics.forEach(topic => {
+    const button = document.createElement('button');
+    button.className = 'topic-button'; button.type = 'button'; button.setAttribute('aria-pressed', String(topic.id === activeTopic.id));
+    button.innerHTML = `<span class="topic-emoji" aria-hidden="true">${topic.icon}</span><span>${topic.name}</span><span class="topic-count">${topic.items.length} cards</span>`;
+    button.addEventListener('click', () => { activeTopic = topic; activeIndex = 0; stopVideo(); renderTopics(); renderCard(); showScene(0); $('learn-area')?.scrollIntoView({behavior:'smooth',block:'start'}); });
+    topicGrid.append(button);
+  });
+}
+
+function renderCard() {
+  const item = activeTopic.items[activeIndex];
+  $('learn-title').textContent = activeTopic.name;
+  $('topic-eyebrow').textContent = `Let’s explore ${activeTopic.name.toLowerCase()}`;
+  $('picture').textContent = item.emoji;
+  $('picture').setAttribute('aria-label', item.name);
+  $('card-kicker').textContent = item.kicker;
+  $('card-title').textContent = item.name;
+  $('card-description').textContent = item.description;
+  $('prompt-text').textContent = item.prompt;
+  $('step-count').textContent = `${activeIndex + 1} of ${activeTopic.items.length}`;
+  $('card-number').textContent = String(activeIndex + 1);
+  $('card-dots').innerHTML = '';
+  activeTopic.items.forEach((card, index) => {
+    const dot = document.createElement('button'); dot.type = 'button'; dot.className = 'card-dot'; dot.setAttribute('aria-label', `Show ${card.name}`);
+    if (index === activeIndex) dot.setAttribute('aria-current','true');
+    dot.addEventListener('click', () => { activeIndex = index; renderCard(); });
+    $('card-dots').append(dot);
+  });
+}
+
+function moveCard(direction) { activeIndex = (activeIndex + direction + activeTopic.items.length) % activeTopic.items.length; renderCard(); }
+
+function sceneData() {
+  const item = activeTopic.items[activeIndex];
+  return [
+    {label:'1 · Look',picture:item.emoji,caption:`This is ${article(item.name)}.`,say:`Look. This is ${article(item.name)}.`,className:''},
+    {label:'2 · Learn',picture:item.emoji,caption:item.description,say:item.description,className:'scene-two'},
+    {label:'3 · Try',picture:'✨',caption:item.prompt,say:`Your turn. ${item.prompt} Take your time.`,className:'scene-three'}
+  ];
+}
+function article(name) { return /^[aeiou]/i.test(name) ? `an ${name}` : `a ${name}`; }
+function showScene(index, shouldSpeak=false) {
+  const scenes = sceneData(); sceneIndex = Math.max(0,Math.min(index,scenes.length-1)); const scene = scenes[sceneIndex];
+  $('scene-label').textContent = scene.label; $('scene-picture').textContent = scene.picture; $('scene-caption').textContent = scene.caption;
+  $('video-scene').className = `video-scene ${scene.className}`;
+  $('video-progress').textContent = `Scene ${sceneIndex+1} of ${scenes.length}`;
+  $('video-track-fill').style.width = `${((sceneIndex+1)/scenes.length)*100}%`;
+  if (shouldSpeak) speak(scene.say);
+}
+function stopVideo() { clearTimeout(videoTimer); videoTimer = null; if ('speechSynthesis' in window) window.speechSynthesis.cancel(); }
+function advanceVideo() {
+  clearTimeout(videoTimer);
+  if (sceneIndex >= sceneData().length - 1) { videoTimer = null; markExplored(activeTopic.items[activeIndex]); $('encouragement').textContent = 'Lovely learning! You can play the lesson again anytime.'; return; }
+  const estimate = Math.max(2500,sceneData()[sceneIndex].say.split(/\s+/).length*420);
+  videoTimer = setTimeout(() => { showScene(sceneIndex+1,true); advanceVideo(); }, estimate);
+}
+function playVideo() { stopVideo(); if (sceneIndex >= sceneData().length-1) showScene(0); showScene(sceneIndex,true); advanceVideo(); }
+
+$('listen-card').addEventListener('click', () => { const item=activeTopic.items[activeIndex]; speak(`${item.kicker}, ${item.name}. ${item.description} ${item.prompt}`); markExplored(item); });
+$('previous-card').addEventListener('click', () => moveCard(-1));
+$('next-card').addEventListener('click', () => moveCard(1));
+$('yes-button').addEventListener('click', () => { markExplored(activeTopic.items[activeIndex]); $('encouragement').textContent = 'Great exploring! You did it. 🌟'; speak('Great exploring! You did it.'); });
+$('again-button').addEventListener('click', () => { $('encouragement').textContent = 'Of course. Let’s look together again.'; speak(`${activeTopic.items[activeIndex].name}. ${activeTopic.items[activeIndex].description}`); });
+$('say-welcome').addEventListener('click', () => speak('Hello, friend! Choose a topic. Look, listen, and learn at your own pace.'));
+$('start-lesson').addEventListener('click', () => { $('video-lesson').scrollIntoView({behavior:'smooth'}); playVideo(); });
+$('play-video').addEventListener('click', playVideo);
+$('pause-video').addEventListener('click', () => { stopVideo(); $('encouragement').textContent = 'Paused. Take a break if you like.'; });
+$('restart-video').addEventListener('click', () => { stopVideo(); showScene(0); playVideo(); });
+$('calm-toggle').addEventListener('click', event => { const enabled=document.body.classList.toggle('calm-mode'); event.currentTarget.setAttribute('aria-pressed',String(enabled)); event.currentTarget.textContent=enabled?'☁️ Calm colors: on':'☀️ Calm colors: off'; });
+document.addEventListener('keydown',event=>{ if (event.target.matches('button,a,input,textarea')) return; if (event.key==='ArrowRight') moveCard(1); if (event.key==='ArrowLeft') moveCard(-1); });
+
+renderTopics(); renderCard(); updateProgress(); showScene(0);

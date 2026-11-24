@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f4ed">
+  <title>Bright Steps — Learning together</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to learning</a>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="Bright Steps home"><span class="brand-mark" aria-hidden="true">✦</span><span>bright steps</span></a>
+    <div class="top-actions">
+      <span class="progress-label" aria-live="polite"><span aria-hidden="true">🌱</span> <span id="progress-text">0 things explored</span></span>
+      <button class="calm-toggle" id="calm-toggle" type="button" aria-pressed="false">☀️ Calm colors: off</button>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="welcome" id="top" aria-labelledby="welcome-title">
+      <div class="welcome-copy">
+        <p class="eyebrow">A little learning, one step at a time</p>
+        <h1 id="welcome-title">Hello, <span class="name-slot" id="child-name">friend</span>! <span aria-hidden="true">👋</span></h1>
+        <p>Choose a topic. Look, listen, and learn at your own pace.</p>
+        <div class="welcome-actions">
+          <button class="primary-button" id="start-lesson" type="button"><span aria-hidden="true">▶</span> Play a short lesson</button>
+          <button class="quiet-button" id="say-welcome" type="button"><span aria-hidden="true">🔊</span> Hear the welcome</button>
+        </div>
+      </div>
+      <div class="welcome-art" aria-hidden="true"><div class="sun">☀️</div><div class="rainbow">🌈</div><div class="cloud">☁️</div><div class="little-star">✦</div></div>
+    </section>
+
+    <section class="topic-section" aria-labelledby="topic-heading">
+      <div class="section-heading"><div><p class="eyebrow">Pick what feels fun</p><h2 id="topic-heading">Learning topics</h2></div><p class="small-hint">You can change topics anytime.</p></div>
+      <div class="topic-grid" id="topic-grid" role="group" aria-label="Choose a learning topic"></div>
+    </section>
+
+    <section class="learn-area" id="learn-area" aria-labelledby="learn-title">
+      <div class="section-heading learn-heading"><div><p class="eyebrow" id="topic-eyebrow">Let’s explore</p><h2 id="learn-title">Alphabets</h2></div><div class="step-count" id="step-count" aria-live="polite">1 of 26</div></div>
+      <div class="learn-layout">
+        <div class="flashcard" id="flashcard" aria-live="polite">
+          <div class="picture-wrap"><span class="picture" id="picture" role="img" aria-label="Apple">🍎</span><span class="picture-sparkle" aria-hidden="true">✦</span></div>
+          <div class="card-copy"><p class="card-kicker" id="card-kicker">A is for</p><h3 id="card-title">Apple</h3><p id="card-description">An apple is a fruit. It can be red, green, or yellow.</p></div>
+          <button class="listen-button" id="listen-card" type="button"><span aria-hidden="true">🔊</span> Listen</button>
+        </div>
+        <div class="practice-panel">
+          <p class="panel-title">Try it together</p>
+          <p id="prompt-text">Can you find something that starts with A?</p>
+          <div class="practice-buttons"><button class="option-button" id="yes-button" type="button">I found it! <span aria-hidden="true">😊</span></button><button class="option-button" id="again-button" type="button">Show me again <span aria-hidden="true">🔁</span></button></div>
+          <p class="encouragement" id="encouragement" aria-live="polite">There is no rush. Take your time.</p>
+          <div class="card-navigation"><button class="round-button" id="previous-card" type="button" aria-label="Previous card">←</button><span>Card <span id="card-number">1</span></span><button class="round-button" id="next-card" type="button" aria-label="Next card">→</button></div>
+        </div>
+      </div>
+      <div class="card-dots" id="card-dots" aria-label="Choose a card"></div>
+    </section>
+
+    <section class="video-section" id="video-lesson" aria-labelledby="video-title">
+      <div class="section-heading"><div><p class="eyebrow">Watch and listen</p><h2 id="video-title">Our picture lesson</h2></div><p class="small-hint">A short narrated lesson with pictures and words.</p></div>
+      <div class="video-player" id="video-player">
+        <div class="video-scene" id="video-scene" aria-live="polite">
+          <div class="scene-label" id="scene-label">1 · Look</div><div class="scene-picture" id="scene-picture" aria-hidden="true">🍎</div>
+          <div class="scene-caption" id="scene-caption">This is an apple.</div>
+        </div>
+        <div class="video-controls"><button class="primary-button" id="play-video" type="button"><span aria-hidden="true">▶</span> Play lesson</button><button class="quiet-button" id="pause-video" type="button"><span aria-hidden="true">Ⅱ</span> Pause</button><button class="quiet-button" id="restart-video" type="button"><span aria-hidden="true">↻</span> Start again</button><span class="video-progress" id="video-progress" aria-live="polite">Scene 1 of 3</span></div>
+        <div class="video-track" aria-hidden="true"><div id="video-track-fill"></div></div>
+      </div>
+      <p class="video-note">The spoken voice uses your device’s built-in voice. You can pause or replay whenever you like.</p>
+    </section>
+
+    <section class="grownup-note" aria-label="Helpful note for grown-ups"><span aria-hidden="true">💛</span><p><strong>For grown-ups:</strong> Every child learns differently. Follow the child’s interests, use short sessions, and take breaks whenever needed.</p></section>
+  </main>
+  <footer><span>bright steps</span><span>Learning can be gentle and joyful.</span></footer>
+</body>
+</html>
